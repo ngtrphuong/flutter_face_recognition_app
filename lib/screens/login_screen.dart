@@ -1,4 +1,4 @@
-import 'package:face_app/widget/auth_widget.dart';
+import 'package:face_app/widgets/auth_widget.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
               height: MediaQuery.of(context).size.height * 0.55,
               child: FittedBox(
                 child: Image(
-                  image: AssetImage('assets/illustration_2.jpeg'),
+                  image: AssetImage('assets/images/illustration_2.jpeg'),
                 ),
                 fit: BoxFit.cover,
                 alignment: Alignment.center,

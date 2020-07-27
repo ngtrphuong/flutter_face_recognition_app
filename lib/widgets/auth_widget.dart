@@ -1,4 +1,6 @@
+import 'package:face_app/providers/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AuthWidget extends StatefulWidget {
   @override
@@ -8,6 +10,8 @@ class AuthWidget extends StatefulWidget {
 class _AuthWidgetState extends State<AuthWidget> {
   String _email;
   String _password;
+
+  var _isLoading = false;
 
   TextStyle field = TextStyle(
     fontWeight: FontWeight.w600,
@@ -65,6 +69,23 @@ class _AuthWidgetState extends State<AuthWidget> {
     );
   }
 
+  Future<void> _submit() async {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+    _formKey.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
+    await Provider.of<Auth>(context, listen: false).authenticate(
+      _email,
+      _password,
+    );
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -99,17 +120,15 @@ class _AuthWidgetState extends State<AuthWidget> {
                   ),
                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                   color: Theme.of(context).primaryColor,
-                  child: Text(
-                    'Login Now',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  onPressed: () {
-                    if (!_formKey.currentState.validate()) {
-                      return;
-                    }
-                    _formKey.currentState.save();
-                    //Send to API
-                  },
+                  child: _isLoading
+                      ? CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                        )
+                      : Text(
+                          'Login Now',
+                          style: TextStyle(color: Colors.white, fontSize: 22),
+                        ),
+                  onPressed: _submit,
                 ),
               )
             ],
