@@ -1,4 +1,5 @@
 import 'package:face_app/providers/auth.dart';
+import 'package:face_app/screens/intro_screen.dart';
 import 'package:face_app/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,10 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Poppins',
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: LoginScreen(),
+        home: IntroScreen(),
+        routes: {
+          LoginScreen.routeName: (ctx) => LoginScreen(),
+        },
       ),
     );
   }

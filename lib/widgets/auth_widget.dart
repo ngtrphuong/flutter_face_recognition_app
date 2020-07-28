@@ -15,8 +15,8 @@ class _AuthWidgetState extends State<AuthWidget> {
   var _isLoading = false;
   var _isObscure = true;
   TextStyle field = TextStyle(
-    fontWeight: FontWeight.w600,
-    fontSize: 20,
+    fontWeight: FontWeight.w500,
+    fontSize: 22,
     letterSpacing: 1.0,
   );
 

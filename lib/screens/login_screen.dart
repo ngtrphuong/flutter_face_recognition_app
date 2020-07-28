@@ -2,6 +2,8 @@ import 'package:face_app/widgets/auth_widget.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
+  static const routeName = '/login';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
