@@ -1,3 +1,4 @@
+import 'package:face_app/models/app_exception.dart';
 import 'package:face_app/providers/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,7 @@ class _AuthWidgetState extends State<AuthWidget> {
   String _password;
 
   var _isLoading = false;
-
+  var _isObscure = true;
   TextStyle field = TextStyle(
     fontWeight: FontWeight.w600,
     fontSize: 20,
@@ -48,24 +49,61 @@ class _AuthWidgetState extends State<AuthWidget> {
   }
 
   Widget _buildPassword() {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: 'Password',
-        labelStyle: field,
-      ),
-      keyboardType: TextInputType.visiblePassword,
-      textInputAction: TextInputAction.done,
-      obscureText: true,
-      validator: (String value) {
-        if (value.isEmpty) {
-          return 'Password is Required';
-        }
+    return Stack(
+      children: <Widget>[
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'Password',
+            labelStyle: field,
+          ),
+          keyboardType: TextInputType.visiblePassword,
+          textInputAction: TextInputAction.done,
+          obscureText: _isObscure,
+          validator: (String value) {
+            if (value.isEmpty) {
+              return 'Password is Required';
+            }
 
-        return null;
-      },
-      onSaved: (String value) {
-        _password = value;
-      },
+            return null;
+          },
+          onSaved: (String value) {
+            _password = value;
+          },
+        ),
+        Positioned(
+            right: 0,
+            top: 6,
+            child: IconButton(
+              icon: Icon(
+                Icons.remove_red_eye,
+                size: 20,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isObscure = !_isObscure;
+                });
+              },
+            ))
+      ],
+    );
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('An Error Occurred!'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
     );
   }
 
@@ -77,10 +115,16 @@ class _AuthWidgetState extends State<AuthWidget> {
     setState(() {
       _isLoading = true;
     });
-    await Provider.of<Auth>(context, listen: false).authenticate(
-      _email,
-      _password,
-    );
+    try {
+      await Provider.of<Auth>(context, listen: false).authenticate(
+        _email,
+        _password,
+      );
+    } on AppException catch (error) {
+      _showErrorDialog(error.toString());
+    } catch (error) {
+      _showErrorDialog(error.toString());
+    }
     setState(() {
       _isLoading = false;
     });
@@ -99,14 +143,16 @@ class _AuthWidgetState extends State<AuthWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                'Login Here',
+                'Login to get your attendance and profile details.',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   fontSize: 30,
                   color: Theme.of(context).primaryColor,
+                  letterSpacing: 1.0,
                 ),
+                textAlign: TextAlign.center,
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 20),
               _buildEmail(),
               _buildPassword(),
               SizedBox(height: 30),
@@ -123,6 +169,9 @@ class _AuthWidgetState extends State<AuthWidget> {
                   child: _isLoading
                       ? CircularProgressIndicator(
                           backgroundColor: Colors.white,
+                          valueColor: new AlwaysStoppedAnimation<Color>(
+                            Colors.purple[200],
+                          ),
                         )
                       : Text(
                           'Login Now',

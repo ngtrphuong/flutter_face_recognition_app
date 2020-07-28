@@ -1,5 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:face_app/models/account.dart';
+import 'package:face_app/models/app_exception.dart';
+import 'package:face_app/models/org.dart';
 import 'package:face_app/models/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
@@ -7,8 +11,10 @@ import 'package:http/http.dart' as http;
 class Auth with ChangeNotifier {
   String _token;
   User _user;
+  Organization _org;
+  Account _emp;
 
-  bool get is_Auth {
+  bool get isAuth {
     return token != null;
   }
 
@@ -16,10 +22,113 @@ class Auth with ChangeNotifier {
     return _token;
   }
 
+  void setUser(Map<String, dynamic> extractedUser) {
+    final newUser = User(
+      id: extractedUser['id'],
+      email: extractedUser['email'],
+      date_joined: DateTime.parse(extractedUser['date_joined']),
+      first_name: extractedUser['first_name'],
+      last_name: extractedUser['last_name'],
+      last_login: DateTime.parse(extractedUser['last_login']),
+      is_superuser: extractedUser['is_superuser'],
+      is_staff: extractedUser['is_staff'],
+      is_active: extractedUser['is_active'],
+      username: extractedUser['username'],
+      groups: extractedUser['groups'],
+      permissions: extractedUser['permissions'],
+      password: extractedUser['password'],
+    );
+    _user = newUser;
+  }
+
+  void setOrg(extractedOrg) {
+    final newOrg = Organization(
+      url: extractedOrg['url'],
+      pk: extractedOrg['pk'],
+      name: extractedOrg['Name'],
+      contact: extractedOrg['contact'],
+      logo: extractedOrg['logo'],
+      orgType: extractedOrg['orgType'],
+      staffcount: extractedOrg['staffcount'],
+    );
+    _org = newOrg;
+  }
+
+  void setEmp(Map<String, dynamic> extractedEmp) {
+    final newEmp = Account(
+      url: extractedEmp['url'],
+      pk: extractedEmp['pk'],
+      empId: extractedEmp['empId'],
+      emailId: extractedEmp['emailId'],
+      username: extractedEmp['username'],
+      firstName: extractedEmp['firstName'],
+      lastName: extractedEmp['lastName'],
+      gender: extractedEmp['gender'],
+      phone: extractedEmp['phone'],
+      readEmp: extractedEmp['readEmp'],
+      addEmp: extractedEmp['addEmp'],
+      readAtt: extractedEmp['readAtt'],
+      addAtt: extractedEmp['addAtt'],
+      readDept: extractedEmp['readDept'],
+      addDept: extractedEmp['addDept'],
+      orgId: extractedEmp['orgId'],
+      deptId: extractedEmp['deptId'],
+      client: extractedEmp['client'],
+      idType: extractedEmp['idType'],
+      idProof: extractedEmp['idProof'],
+      profileImg: extractedEmp['profileImg'],
+    );
+    _emp = newEmp;
+  }
+
+  dynamic _returnResponse(http.Response response) {
+    var responseJson = json.decode(response.body);
+    var errorList = [];
+    if (responseJson is List<dynamic>) {
+      responseJson = responseJson as List<dynamic>;
+      if (responseJson.length != 0) {
+        responseJson = responseJson[0];
+      } else {
+        errorList.add('You are not yet registered to any organization.');
+        throw BadRequestException(errorList.join(' '));
+      }
+    }
+    final errorData = responseJson as Map<String, dynamic>;
+    errorData.forEach((key, value) {
+      if (key == 'field_errors') {
+        final errors = errorData[key] as List<dynamic>;
+        errors.forEach((err) {
+          errorList.add(err);
+        });
+      }
+      if (key == 'non_field_errors') {
+        final errors = errorData[key] as List<dynamic>;
+        errors.forEach((err) {
+          errorList.add(err);
+        });
+      }
+    });
+    switch (response.statusCode) {
+      case 200:
+        return responseJson;
+      case 400:
+        throw BadRequestException(errorList.join(' '));
+      case 401:
+      case 403:
+        throw UnauthorisedException(errorList.join(' '));
+      case 500:
+      default:
+        throw FetchDataException(
+            'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
+    }
+  }
+
   Future<void> authenticate(String email, String password) async {
-    const url = 'https://api-detect-admin.herokuapp.com/attendance/auth/login/';
+    var finalResponse;
+    String url =
+        'https://api-detect-admin.herokuapp.com/attendance/auth/login/';
     try {
-      final response = await http.post(
+      var response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -29,27 +138,28 @@ class Auth with ChangeNotifier {
           'password': password,
         }),
       );
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      finalResponse = _returnResponse(response);
+      final extractedData = finalResponse as Map<String, dynamic>;
       _token = extractedData['token'];
       final extractedUser = extractedData['user'] as Map<String, dynamic>;
-      final newUser = User(
-        id: extractedUser['id'],
-        email: extractedUser['email'],
-        date_joined: DateTime.parse(extractedUser['date_joined']),
-        first_name: extractedUser['first_name'],
-        last_name: extractedUser['last_name'],
-        last_login: DateTime.parse(extractedUser['last_login']),
-        is_superuser: extractedUser['is_superuser'],
-        is_staff: extractedUser['is_staff'],
-        is_active: extractedUser['is_active'],
-        username: extractedUser['username'],
-        groups: extractedUser['groups'],
-        permissions: extractedUser['permissions'],
-        password: extractedUser['password'],
-      );
-      _user = newUser;
+      setUser(extractedUser);
+      url =
+          'https://api-detect-admin.herokuapp.com/attendance/api/accounts/filter?email=${_user.email}';
+      response = await http.get(url);
+      finalResponse = _returnResponse(response);
+      final extractedEmp = finalResponse;
+      setEmp(extractedEmp);
+      url =
+          'https://api-detect-admin.herokuapp.com/attendance/api/org/${_emp.orgId}/';
+      response = await http.get(url);
+      finalResponse = _returnResponse(response);
+      final extractedOrg = finalResponse;
+      setOrg(extractedOrg);
       notifyListeners();
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
     } catch (error) {
+      print(error.toString());
       throw error;
     }
   }

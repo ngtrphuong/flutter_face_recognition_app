@@ -12,7 +12,7 @@ class LoginScreen extends StatelessWidget {
           children: <Widget>[
             Container(
               width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.55,
+              height: MediaQuery.of(context).size.height * 0.45,
               child: FittedBox(
                 child: Image(
                   image: AssetImage('assets/images/illustration_2.jpeg'),
