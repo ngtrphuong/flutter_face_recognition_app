@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class User {
   final int id;
   final String password;
@@ -28,4 +30,20 @@ class User {
     this.groups,
     this.permissions,
   });
+
+  Map toJson() => {
+        'id': id,
+        'password': password,
+        'last_login': last_login.toIso8601String(),
+        'is_superuser': is_superuser,
+        'first_name': first_name,
+        'last_name': last_name,
+        'is_active': is_active,
+        'is_staff': is_staff,
+        'date_joined': date_joined.toIso8601String(),
+        'username': username,
+        'email': email,
+        'groups': json.encode(groups),
+        'permissions': json.encode(permissions),
+      };
 }

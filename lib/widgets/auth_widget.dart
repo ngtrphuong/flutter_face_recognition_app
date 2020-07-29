@@ -120,6 +120,7 @@ class _AuthWidgetState extends State<AuthWidget> {
         _email,
         _password,
       );
+      Navigator.of(context).pushReplacementNamed('/home');
     } on AppException catch (error) {
       _showErrorDialog(error.toString());
     } catch (error) {

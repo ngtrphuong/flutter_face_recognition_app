@@ -7,6 +7,7 @@ import 'package:face_app/models/org.dart';
 import 'package:face_app/models/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   String _token;
@@ -20,6 +21,24 @@ class Auth with ChangeNotifier {
 
   String get token {
     return _token;
+  }
+
+  User get user {
+    if (isAuth) {
+      return _user;
+    }
+  }
+
+  Organization get org {
+    if (isAuth) {
+      return _org;
+    }
+  }
+
+  Account get emp {
+    if (isAuth) {
+      return _emp;
+    }
   }
 
   void setUser(Map<String, dynamic> extractedUser) {
@@ -125,6 +144,7 @@ class Auth with ChangeNotifier {
 
   Future<void> authenticate(String email, String password) async {
     var finalResponse;
+    final prefs = await SharedPreferences.getInstance();
     String url =
         'https://api-detect-admin.herokuapp.com/attendance/auth/login/';
     try {
@@ -143,24 +163,67 @@ class Auth with ChangeNotifier {
       _token = extractedData['token'];
       final extractedUser = extractedData['user'] as Map<String, dynamic>;
       setUser(extractedUser);
-      url =
-          'https://api-detect-admin.herokuapp.com/attendance/api/accounts/filter?email=${_user.email}';
-      response = await http.get(url);
-      finalResponse = _returnResponse(response);
-      final extractedEmp = finalResponse;
-      setEmp(extractedEmp);
-      url =
-          'https://api-detect-admin.herokuapp.com/attendance/api/org/${_emp.orgId}/';
-      response = await http.get(url);
-      finalResponse = _returnResponse(response);
-      final extractedOrg = finalResponse;
-      setOrg(extractedOrg);
+      if (!prefs.containsKey('userAcc')) {
+        url =
+            'https://api-detect-admin.herokuapp.com/attendance/api/accounts/filter?email=${_user.email}';
+        response = await http.get(url);
+        finalResponse = _returnResponse(response);
+        final extractedEmp = finalResponse;
+        setEmp(extractedEmp);
+      } else {
+        setEmp(jsonDecode(prefs.getString('userAcc')));
+      }
+      if (!prefs.containsKey('userOrg')) {
+        url =
+            'https://api-detect-admin.herokuapp.com/attendance/api/org/${_emp.orgId}/';
+        response = await http.get(url);
+        finalResponse = _returnResponse(response);
+        final extractedOrg = finalResponse;
+        setOrg(extractedOrg);
+      } else {
+        setOrg(jsonDecode(prefs.getString('userOrg')));
+      }
+      final userLogin = json.encode({
+        'email': email,
+        'password': password,
+      });
+      prefs.setString('userCredential', userLogin);
       notifyListeners();
+      if (!prefs.containsKey('userAcc')) {
+        saveDataLocally();
+      }
     } on SocketException {
       throw FetchDataException('No Internet connection');
     } catch (error) {
       print(error.toString());
       throw error;
     }
+  }
+
+  Future<void> saveDataLocally() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('userOrg', jsonEncode(_org));
+    prefs.setString('userAcc', jsonEncode(_emp));
+    prefs.setString('userDetail', jsonEncode(_user));
+  }
+
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userCredential')) {
+      return false;
+    }
+    final loginInfo = json.decode(prefs.getString('userCredential'));
+    await authenticate(loginInfo['email'], loginInfo['password']);
+    return true;
+  }
+
+  Future<void> logout() async {
+    _token = null;
+    _org = null;
+    _emp = null;
+    _user = null;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
   }
 }

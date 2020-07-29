@@ -44,4 +44,28 @@ class Account {
     this.deptId,
     this.client,
   });
+
+  Map toJson() => {
+        'url': url,
+        'pk': pk,
+        'empId': empId,
+        'emailId': emailId,
+        'username': username,
+        'firstName': firstName,
+        'lastName': lastName,
+        'gender': gender,
+        'phone': phone,
+        'readEmp': readEmp,
+        'addEmp': addEmp,
+        'readAtt': readAtt,
+        'addAtt': addAtt,
+        'readDept': readDept,
+        'addDept': addDept,
+        'idProof': idProof,
+        'idType': idType,
+        'profileImg': profileImg,
+        'orgId': orgId,
+        'deptId': deptId,
+        'client': client,
+      };
 }

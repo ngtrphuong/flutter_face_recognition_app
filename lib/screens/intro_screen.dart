@@ -6,8 +6,8 @@ class IntroScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsiveHeight = MediaQuery.of(context).size.height;
-    final responsiveWidth = MediaQuery.of(context).size.width;
+    // final MediaQuery.of(context).size.height = MediaQuery.of(context).size.height;
+    // final MediaQuery.of(context).size.width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -17,7 +17,7 @@ class IntroScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                height: responsiveHeight * 0.10,
+                height: MediaQuery.of(context).size.height * 0.10,
               ),
               Text(
                 'Face Attendance',
@@ -27,7 +27,7 @@ class IntroScreen extends StatelessWidget {
                 ),
               ),
               // SizedBox(
-              //   height: responsiveHeight * 0.01,
+              //   height: MediaQuery.of(context).size.height * 0.01,
               // ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -41,13 +41,9 @@ class IntroScreen extends StatelessWidget {
               ),
               Container(
                 // width: double.infinity,
-                height: responsiveHeight * 0.45,
-                child: FittedBox(
-                  child: Image(
-                    image: AssetImage('assets/images/illustration_1.jpeg'),
-                  ),
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
+                height: MediaQuery.of(context).size.height * 0.45,
+                child: Image(
+                  image: AssetImage('assets/images/illustration_1.jpeg'),
                 ),
               ),
               Padding(
@@ -62,8 +58,8 @@ class IntroScreen extends StatelessWidget {
                 ),
               ),
               ButtonTheme(
-                minWidth: responsiveWidth * 0.5,
-                height: responsiveHeight * 0.08,
+                minWidth: MediaQuery.of(context).size.width * 0.5,
+                height: MediaQuery.of(context).size.height * 0.08,
                 child: RaisedButton(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -75,7 +71,8 @@ class IntroScreen extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 22),
                   ),
                   onPressed: () {
-                    Navigator.of(context).pushNamed(LoginScreen.routeName);
+                    Navigator.of(context)
+                        .pushReplacementNamed(LoginScreen.routeName);
                   },
                 ),
               )

@@ -16,4 +16,14 @@ class Organization {
     this.staffcount,
     this.logo,
   });
+
+  Map toJson() => {
+        'url': url,
+        'pk': pk,
+        'name': name,
+        'orgType': orgType,
+        'contact': contact,
+        'staffcount': staffcount,
+        'logo': logo,
+      };
 }
