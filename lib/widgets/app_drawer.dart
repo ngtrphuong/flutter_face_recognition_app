@@ -1,4 +1,5 @@
 import 'package:face_app/providers/auth.dart';
+import 'package:face_app/screens/attendance_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -56,7 +57,10 @@ class AppDrawer extends StatelessWidget {
                 'My Attendance',
                 style: itemStyle,
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushNamed(AttendanceScreen.routeName);
+              },
             ),
             ListTile(
               trailing: Icon(Icons.person),

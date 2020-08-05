@@ -1,4 +1,6 @@
+import 'package:face_app/providers/attendance.dart';
 import 'package:face_app/providers/auth.dart';
+import 'package:face_app/screens/attendance_screen.dart';
 import 'package:face_app/screens/home_screen.dart';
 import 'package:face_app/screens/intro_screen.dart';
 import 'package:face_app/screens/login_screen.dart';
@@ -18,6 +20,13 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (ctx) => Auth(),
+        ),
+        ChangeNotifierProxyProvider<Auth, Attendance>(
+          create: (_) => Attendance(null, null),
+          update: (ctx, auth, previousAttendance) => Attendance(
+            auth.org,
+            auth.emp,
+          ),
         ),
       ],
       child: Consumer<Auth>(
@@ -42,6 +51,7 @@ class MyApp extends StatelessWidget {
                 ),
           routes: {
             HomeScreen.routeName: (ctx) => HomeScreen(),
+            AttendanceScreen.routeName: (ctx) => AttendanceScreen(),
             LoginScreen.routeName: (ctx) => LoginScreen(),
           },
         ),
