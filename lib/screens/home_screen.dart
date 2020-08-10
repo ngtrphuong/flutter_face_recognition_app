@@ -1,3 +1,5 @@
+import 'package:camera/camera.dart';
+import 'package:face_app/screens/face_scanner_screen.dart';
 import 'package:face_app/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -99,26 +101,35 @@ class HomeScreen extends StatelessWidget {
                       Stack(
                         children: [
                           Container(
-                              height: 70,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).primaryColor,
-                              ),
-                              child: InkWell(
-                                onTap: () {},
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.6,
-                                  alignment: Alignment.centerLeft,
-                                  padding: EdgeInsets.only(left: 20),
-                                  child: Text(
-                                    'Tap to Scan',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 22),
-                                  ),
+                            height: 70,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            child: InkWell(
+                              onTap: () async {
+                                final cameras = await availableCameras();
+
+                                // Get a specific camera from the list of available cameras.
+                                final firstCamera = cameras.last;
+
+                                Navigator.of(context).pushNamed(
+                                    FaceScanner.routeName,
+                                    arguments: firstCamera);
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                alignment: Alignment.centerLeft,
+                                padding: EdgeInsets.only(left: 20),
+                                child: Text(
+                                  'Tap to Scan',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 22),
                                 ),
-                              )),
+                              ),
+                            ),
+                          ),
                           Positioned(
                             right: 20,
                             top: 10,

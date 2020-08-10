@@ -1,6 +1,7 @@
 import 'package:face_app/providers/attendance.dart';
 import 'package:face_app/providers/auth.dart';
 import 'package:face_app/screens/attendance_screen.dart';
+import 'package:face_app/screens/face_scanner_screen.dart';
 import 'package:face_app/screens/home_screen.dart';
 import 'package:face_app/screens/intro_screen.dart';
 import 'package:face_app/screens/login_screen.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
             HomeScreen.routeName: (ctx) => HomeScreen(),
             AttendanceScreen.routeName: (ctx) => AttendanceScreen(),
             LoginScreen.routeName: (ctx) => LoginScreen(),
+            FaceScanner.routeName: (ctx) => FaceScanner(),
           },
         ),
       ),
