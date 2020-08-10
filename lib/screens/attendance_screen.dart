@@ -96,13 +96,27 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       ),
                     ),
                     Container(
-                      height: MediaQuery.of(context).size.height,
-                      child: ListView.builder(
-                        itemBuilder: (_, index) => AttendanceWidget(att[index]),
-                        itemCount: att.length,
-                      ),
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      child: att.isEmpty
+                          ? Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Text(
+                                  'Your attendance has not been recorded since 5 days.',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemBuilder: (_, index) =>
+                                  AttendanceWidget(att[index]),
+                              itemCount: att.length,
+                            ),
                     ),
-                    
                   ],
                 ),
               ),

@@ -70,10 +70,16 @@ class AttendanceWidget extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  att['check_in'],
-                  style: TextStyle(fontSize: 18),
-                ),
+                att['check_in'] != null
+                    ? Text(
+                        att['check_in'],
+                        style: TextStyle(fontSize: 18),
+                      )
+                    : Text(
+                        'Not recorded',
+                        style: TextStyle(fontSize: 18, color: Colors.pink),
+                        textAlign: TextAlign.center,
+                      ),
               ],
             ),
           ),
@@ -98,10 +104,16 @@ class AttendanceWidget extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  att['check_out'],
-                  style: TextStyle(fontSize: 18),
-                ),
+                att['check_out'] != null
+                    ? Text(
+                        att['check_out'],
+                        style: TextStyle(fontSize: 18),
+                      )
+                    : Text(
+                        'Not recorded',
+                        style: TextStyle(fontSize: 18, color: Colors.pink),
+                        textAlign: TextAlign.center,
+                      ),
               ],
             ),
           ),
