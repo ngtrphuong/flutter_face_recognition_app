@@ -1,11 +1,11 @@
 import 'package:face_app/providers/attendance.dart';
 import 'package:face_app/providers/auth.dart';
-import 'package:face_app/screens/accepted_screen.dart';
 import 'package:face_app/screens/attendance_screen.dart';
 import 'package:face_app/screens/face_scanner_screen.dart';
 import 'package:face_app/screens/home_screen.dart';
 import 'package:face_app/screens/intro_screen.dart';
 import 'package:face_app/screens/login_screen.dart';
+import 'package:face_app/screens/setup_faceRec_screen.dart';
 import 'package:face_app/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
             AttendanceScreen.routeName: (ctx) => AttendanceScreen(),
             LoginScreen.routeName: (ctx) => LoginScreen(),
             FaceScanner.routeName: (ctx) => FaceScanner(),
-            AcceptedScreen.routeName: (ctx) => AcceptedScreen(),
+            SetupFaceRecScreen.routeName: (ctx) => SetupFaceRecScreen(),
           },
         ),
       ),

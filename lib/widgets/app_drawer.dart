@@ -1,5 +1,7 @@
 import 'package:face_app/providers/auth.dart';
 import 'package:face_app/screens/attendance_screen.dart';
+import 'package:face_app/screens/home_screen.dart';
+import 'package:face_app/screens/setup_faceRec_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,12 +46,28 @@ class AppDrawer extends StatelessWidget {
             ),
             Divider(),
             ListTile(
-              trailing: Icon(Icons.dashboard),
+              trailing: Icon(Icons.home),
               title: Text(
-                'Dashboard',
+                'Home',
                 style: itemStyle,
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushReplacementNamed(HomeScreen.routeName);
+              },
+            ),
+            ListTile(
+              trailing: Icon(Icons.dashboard),
+              title: Text(
+                'Setup Face Recognition',
+                style: itemStyle,
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushReplacementNamed(SetupFaceRecScreen.routeName);
+              },
             ),
             ListTile(
               trailing: Icon(Icons.dashboard),

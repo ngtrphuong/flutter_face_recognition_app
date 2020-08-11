@@ -4,7 +4,9 @@ import 'package:face_app/models/account.dart';
 import 'package:face_app/models/app_exception.dart';
 import 'package:face_app/models/org.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class Attendance with ChangeNotifier {
   List<dynamic> fullAttendance = [];
@@ -124,6 +126,40 @@ class Attendance with ChangeNotifier {
       });
       // print(json.decode(httpResponse.body));
       // print(streamedResponse.statusCode);
+      // print(httpResponse);
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Future<void> trainDataset(List<Asset> images) async {
+    final url =
+        'https://api-detect-admin.herokuapp.com/attendance/train_dataset/';
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.fields['empId'] = emp.empId.toString();
+    try {
+      for (var image in images) {
+        ByteData byteData = await image.getByteData();
+        print('aaya');
+        List<int> imageData = byteData.buffer.asUint8List();
+        // print(imageData);
+        http.MultipartFile multipartFile = http.MultipartFile.fromBytes(
+          'image',
+          imageData,
+          filename: image.name,
+        );
+        print(multipartFile.field);
+        request.files.add(multipartFile);
+        print(request.files.length);
+      }
+      print(request.files.length);
+
+      final streamedResponse = await request.send();
+      final httpResponse = await http.Response.fromStream(streamedResponse);
+      final finalResponse =
+          json.decode(httpResponse.body) as Map<String, dynamic>;
+      print(finalResponse);
+      // print(streamedResponse);
       // print(httpResponse);
     } catch (error) {
       print(error);

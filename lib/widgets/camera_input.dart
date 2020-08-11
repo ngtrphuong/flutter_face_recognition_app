@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:face_app/providers/attendance.dart';
-import 'package:face_app/screens/accepted_screen.dart';
+import 'package:face_app/widgets/accepted_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';

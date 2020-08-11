@@ -1,5 +1,5 @@
 import 'package:face_app/providers/attendance.dart';
-import 'package:face_app/screens/accepted_screen.dart';
+import 'package:face_app/widgets/accepted_screen.dart';
 import 'package:face_app/widgets/camera_input.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
