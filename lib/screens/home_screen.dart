@@ -119,8 +119,8 @@ class HomeScreen extends StatelessWidget {
                                     arguments: firstCamera);
                               },
                               child: Container(
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                alignment: Alignment.centerLeft,
+                                // width: MediaQuery.of(context).size.width * 0.6,
+                                alignment: Alignment.center,
                                 padding: EdgeInsets.only(left: 20),
                                 child: Text(
                                   'Tap to Scan',
@@ -129,19 +129,6 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            right: 20,
-                            top: 10,
-                            child: Container(
-                                height: 50,
-                                alignment: Alignment.center,
-                                width: MediaQuery.of(context).size.width * 0.2,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.white,
-                                ),
-                                child: Icon(Icons.arrow_back)),
                           ),
                         ],
                       )

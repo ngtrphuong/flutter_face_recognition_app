@@ -1,5 +1,8 @@
+import 'package:face_app/providers/attendance.dart';
+import 'package:face_app/screens/accepted_screen.dart';
 import 'package:face_app/widgets/camera_input.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FaceScanner extends StatelessWidget {
   static const routeName = '/scan-face';
@@ -7,6 +10,7 @@ class FaceScanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final camera = ModalRoute.of(context).settings.arguments;
+    // final recognizedFace = Provider.of<Attendance>(context).recognizedFace;
     return Scaffold(
       appBar: AppBar(
         title: Text('Scan Your Face'),

@@ -31,6 +31,7 @@ dependencies:
   camera: ^0.5.8+2
   path: ^1.7.0
   path_provider: ^1.6.11
+  location: ^3.0.0
 
 
   # The following adds the Cupertino Icons font to your application.

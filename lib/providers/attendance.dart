@@ -11,6 +11,9 @@ class Attendance with ChangeNotifier {
   List<dynamic> fiveDaysAttendance = [];
   final Organization org;
   final Account emp;
+  String recFace;
+  String recFaceError;
+  double recFaceAccuracy;
 
   Attendance(this.org, this.emp);
 
@@ -20,6 +23,18 @@ class Attendance with ChangeNotifier {
 
   List<dynamic> get latestFiveDaysAttendance {
     return fiveDaysAttendance;
+  }
+
+  String get recognizedFace {
+    return recFace;
+  }
+
+  String get recognizedFaceError {
+    return recFaceError;
+  }
+
+  double get recognizedFaceAccuracy {
+    return recFaceAccuracy;
   }
 
   dynamic _returnResponse(http.Response response) {
@@ -80,5 +95,38 @@ class Attendance with ChangeNotifier {
         fiveDaysAttendance.add(att);
       }
     });
+  }
+
+  Future<void> takeAttendance(String imagePath) async {
+    final url = 'https://api-detect-admin.herokuapp.com/attendance/detect/';
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    try {
+      request.files.add(await http.MultipartFile.fromPath('image', imagePath));
+      final streamedResponse = await request.send();
+      final httpResponse = await http.Response.fromStream(streamedResponse);
+      final finalResponse =
+          json.decode(httpResponse.body) as Map<String, dynamic>;
+
+      finalResponse.forEach((key, value) {
+        if (key == 'result') {
+          final responseResult =
+              finalResponse['result'] as Map<String, dynamic>;
+          if (responseResult['firstName'] != null) {
+            recFace =
+                responseResult['firstName'] + ' ' + responseResult['lastName'];
+          }
+          recFaceAccuracy = responseResult['accuracy'];
+          recFaceError = responseResult['error'];
+          notifyListeners();
+          // print(recFace);
+          // print(recFaceError);
+        }
+      });
+      // print(json.decode(httpResponse.body));
+      // print(streamedResponse.statusCode);
+      // print(httpResponse);
+    } catch (error) {
+      print(error);
+    }
   }
 }
