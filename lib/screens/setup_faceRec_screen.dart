@@ -103,30 +103,35 @@ class _SetupFaceRecScreenState extends State<SetupFaceRecScreen> {
         title: Text('Upload Your Images'),
       ),
       drawer: AppDrawer(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: loadAssets,
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(Icons.add_a_photo),
+      ),
       body: Column(
         children: <Widget>[
           if (_error != 'No Error Dectected' && _error != null)
             Center(child: Text('Error: $_error')),
-          if (images == null)
+          if (images == null || images.length == 0)
             Expanded(
               child: Center(
-                child: RaisedButton(
-                  color: Theme.of(context).primaryColor,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
                   child: Text(
-                    "Pick images",
+                    "You have not selected any image. Please select images.",
                     style: TextStyle(
-                      color: Colors.white,
+                      // color: Colors.white,
                       fontSize: 20,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  onPressed: loadAssets,
                 ),
               ),
             ),
           Expanded(
             child: buildGridView(),
           ),
-          if (images != null)
+          if (images != null && images.length != 0)
             Container(
               padding: EdgeInsets.only(bottom: 20),
               height: 70,

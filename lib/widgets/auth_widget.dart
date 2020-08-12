@@ -51,39 +51,45 @@ class _AuthWidgetState extends State<AuthWidget> {
   Widget _buildPassword() {
     return Stack(
       children: <Widget>[
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: 'Password',
-            labelStyle: field,
+        Container(
+          height: 60,
+          alignment: Alignment.center,
+          child: TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Password',
+              labelStyle: field,
+            ),
+            keyboardType: TextInputType.visiblePassword,
+            textInputAction: TextInputAction.done,
+            obscureText: _isObscure,
+            validator: (String value) {
+              if (value.isEmpty) {
+                return 'Password is Required';
+              }
+              return null;
+            },
+            onSaved: (String value) {
+              _password = value;
+            },
           ),
-          keyboardType: TextInputType.visiblePassword,
-          textInputAction: TextInputAction.done,
-          obscureText: _isObscure,
-          validator: (String value) {
-            if (value.isEmpty) {
-              return 'Password is Required';
-            }
-
-            return null;
-          },
-          onSaved: (String value) {
-            _password = value;
-          },
         ),
         Positioned(
             right: 0,
-            top: 6,
-            child: IconButton(
-              icon: Icon(
-                Icons.remove_red_eye,
-                size: 20,
-                color: Colors.grey,
+            child: Container(
+              height: 60,
+              alignment: Alignment.center,
+              child: IconButton(
+                icon: Icon(
+                  !_isObscure ? Icons.visibility : Icons.visibility_off,
+                  size: 20,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isObscure = !_isObscure;
+                  });
+                },
               ),
-              onPressed: () {
-                setState(() {
-                  _isObscure = !_isObscure;
-                });
-              },
             ))
       ],
     );
@@ -169,9 +175,8 @@ class _AuthWidgetState extends State<AuthWidget> {
                   color: Theme.of(context).primaryColor,
                   child: _isLoading
                       ? CircularProgressIndicator(
-                          backgroundColor: Colors.white,
                           valueColor: new AlwaysStoppedAnimation<Color>(
-                            Colors.purple[200],
+                            Colors.white,
                           ),
                         )
                       : Text(
