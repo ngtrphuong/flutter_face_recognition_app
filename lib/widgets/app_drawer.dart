@@ -65,8 +65,7 @@ class AppDrawer extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.of(context).pop();
-                Navigator.of(context)
-                    .pushReplacementNamed(SetupFaceRecScreen.routeName);
+                Navigator.of(context).pushNamed(SetupFaceRecScreen.routeName);
               },
             ),
             ListTile(

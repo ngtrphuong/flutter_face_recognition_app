@@ -21,6 +21,8 @@ class _CameraInputState extends State<CameraInput> {
   String _imagePath = '';
   CameraController _controller;
   Future<void> _initializeControllerFuture;
+  var _isLoading = false;
+  int retry = 1;
 
   @override
   void initState() {
@@ -46,13 +48,21 @@ class _CameraInputState extends State<CameraInput> {
   }
 
   Future<void> onSubmitImage() async {
-    await Provider.of<Attendance>(context, listen: false)
-        .takeAttendance(_imagePath);
-    final recognisedFace =
-        Provider.of<Attendance>(context, listen: false).recFace;
+    setState(() {
+      _isLoading = true;
+      retry += 1;
+    });
+    final attendance = Provider.of<Attendance>(context, listen: false);
+    await attendance.takeAttendance(_imagePath);
+    setState(() {
+      _isLoading = false;
+    });
+    final recognisedFace = attendance.recFace;
+    final recognisedFaceAccuracy = attendance.recFaceAccuracy;
     print('idhar aaya');
     print(recognisedFace);
-    if (recognisedFace != null) {
+    print(recognisedFaceAccuracy);
+    if (recognisedFace != null && recognisedFaceAccuracy > 90) {
       await showDialog(
         context: context,
         builder: (context) => AcceptedScreen(),
@@ -63,7 +73,7 @@ class _CameraInputState extends State<CameraInput> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text('An Error Occurred!'),
-          content: Text('Can\'t Able to recognise Face'),
+          content: Text('Can\'t Able to recognise Face properly. Try Again.'),
           actions: <Widget>[
             FlatButton(
               child: Text('Retry'),
@@ -83,6 +93,9 @@ class _CameraInputState extends State<CameraInput> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   title: Text('Scan Your Face.'),
+      // ),
       // Wait until the controller is initialized before displaying the
       // camera preview. Use a FutureBuilder to display a loading spinner
       // until the controller has finished initializing.
@@ -106,11 +119,13 @@ class _CameraInputState extends State<CameraInput> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         FloatingActionButton(
+                          heroTag: 'confirmButton',
                           backgroundColor: Colors.green[700],
                           onPressed: onSubmitImage,
                           child: Icon(Icons.done),
                         ),
                         FloatingActionButton(
+                          heroTag: 'cancelButon',
                           backgroundColor: Colors.red[700],
                           onPressed: () {
                             setState(() {
@@ -123,6 +138,12 @@ class _CameraInputState extends State<CameraInput> {
                     ),
                   ),
                 ),
+                if (_isLoading)
+                  LinearProgressIndicator(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      valueColor: new AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      )),
               ],
             )
           : FutureBuilder<void>(
@@ -140,6 +161,7 @@ class _CameraInputState extends State<CameraInput> {
       floatingActionButton: _imagePath != ''
           ? null
           : FloatingActionButton(
+              heroTag: 'cameraBtn',
               child: Icon(Icons.camera_alt),
               // Provide an onPressed callback.
               onPressed: () async {

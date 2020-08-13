@@ -157,7 +157,7 @@ class Attendance with ChangeNotifier {
       final streamedResponse = await request.send();
       final httpResponse = await http.Response.fromStream(streamedResponse);
       final finalResponse =
-          json.decode(httpResponse.body) as Map<String, dynamic>;
+          _returnResponse(httpResponse) as Map<String, dynamic>;
       print(finalResponse);
       // print(streamedResponse);
       // print(httpResponse);

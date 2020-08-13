@@ -1,3 +1,4 @@
+import 'package:face_app/models/app_exception.dart';
 import 'package:face_app/providers/attendance.dart';
 import 'package:face_app/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,12 @@ class SetupFaceRecScreen extends StatefulWidget {
 class _SetupFaceRecScreenState extends State<SetupFaceRecScreen> {
   List<Asset> images = List<Asset>();
   String _error;
+  var _loading = false;
+
+  String _submitTitle = 'Submitted';
+  String _submitErrorTitle = 'An Error Occurred!';
+  String _submitContent =
+      'Your data has been saved successfully and ready to use.';
 
   @override
   void initState() {
@@ -96,14 +103,58 @@ class _SetupFaceRecScreenState extends State<SetupFaceRecScreen> {
     });
   }
 
+  void _showErrorDialog(String title, String message, bool error) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Okay'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  void submitData() async {
+    setState(() {
+      _loading = true;
+    });
+    try {
+      await Provider.of<Attendance>(context, listen: false)
+          .trainDataset(images);
+      _showErrorDialog(_submitTitle, _submitContent, false);
+    } on AppException catch (error) {
+      _showErrorDialog(_submitErrorTitle, error.toString(), true);
+    } catch (error) {
+      _showErrorDialog(_submitErrorTitle, error.toString(), true);
+    }
+    setState(() {
+      _loading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // automaticallyImplyLeading: true,
+        // leading: IconButton(
+        //   onPressed: () {
+        //     Navigator.of(context).pop();
+        //   },
+        //   icon: Icon(Icons.arrow_back),
+        // ),
         title: Text('Upload Your Images'),
       ),
-      drawer: AppDrawer(),
+      // drawer: AppDrawer(),
       floatingActionButton: FloatingActionButton(
+        heroTag: 'addPhotosButton',
         onPressed: loadAssets,
         backgroundColor: Theme.of(context).primaryColor,
         child: Icon(Icons.add_a_photo),
@@ -138,17 +189,19 @@ class _SetupFaceRecScreenState extends State<SetupFaceRecScreen> {
               width: 150,
               child: FlatButton(
                 color: Theme.of(context).primaryColor,
-                onPressed: () {
-                  Provider.of<Attendance>(context, listen: false)
-                      .trainDataset(images);
-                },
-                child: Text(
-                  'Upload',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
+                onPressed: submitData,
+                child: _loading
+                    ? CircularProgressIndicator(
+                        valueColor: new AlwaysStoppedAnimation<Color>(
+                        Colors.white,
+                      ))
+                    : Text(
+                        'Upload',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
               ),
             )
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AcceptedScreen extends StatelessWidget {
   static const routeName = '/accepted-screen';
@@ -55,7 +56,7 @@ class AcceptedScreen extends StatelessWidget {
               ),
             ),
             Text(
-              'Entry Time - 10:00',
+              'Entry Time - ${DateFormat.Hm().format(DateTime.now())}',
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
