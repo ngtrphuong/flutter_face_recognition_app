@@ -14,6 +14,7 @@ class Auth with ChangeNotifier {
   User _user;
   Organization _org;
   Account _emp;
+  String djangoBaseURL = "http://192.168.28.45:8000"; //"https://api-detect-admin.herokuapp.com"
 
   bool get isAuth {
     return token != null;
@@ -145,8 +146,8 @@ class Auth with ChangeNotifier {
   Future<void> authenticate(String email, String password) async {
     var finalResponse;
     final prefs = await SharedPreferences.getInstance();
-    String url =
-        'https://api-detect-admin.herokuapp.com/attendance/auth/login/';
+    String url = djangoBaseURL +
+        '/attendance/auth/login/';
     try {
       var response = await http.post(
         url,
@@ -164,8 +165,8 @@ class Auth with ChangeNotifier {
       final extractedUser = extractedData['user'] as Map<String, dynamic>;
       setUser(extractedUser);
       if (!prefs.containsKey('userAcc')) {
-        url =
-            'https://api-detect-admin.herokuapp.com/attendance/api/accounts/filter?email=${_user.email}';
+        url = djangoBaseURL +
+            '/attendance/api/accounts/filter?email=${_user.email}';
         response = await http.get(url);
         finalResponse = _returnResponse(response);
         final extractedEmp = finalResponse;
@@ -174,8 +175,8 @@ class Auth with ChangeNotifier {
         setEmp(jsonDecode(prefs.getString('userAcc')));
       }
       if (!prefs.containsKey('userOrg')) {
-        url =
-            'https://api-detect-admin.herokuapp.com/attendance/api/org/${_emp.orgId}/';
+        url = djangoBaseURL +
+            '/attendance/api/org/${_emp.orgId}/';
         response = await http.get(url);
         finalResponse = _returnResponse(response);
         final extractedOrg = finalResponse;

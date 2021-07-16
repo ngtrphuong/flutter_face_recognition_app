@@ -16,6 +16,7 @@ class Attendance with ChangeNotifier {
   String recFace;
   String recFaceError;
   double recFaceAccuracy;
+  String djangoBaseURL = "http://192.168.28.45:8000"; //"https://api-detect-admin.herokuapp.com"
 
   Attendance(this.org, this.emp);
 
@@ -73,8 +74,8 @@ class Attendance with ChangeNotifier {
   }
 
   Future<void> getAttendanceByMonth(int month) async {
-    final url =
-        'http://api-detect-admin.herokuapp.com/attendance/api/report?orgId=${org.pk}&month=$month';
+    final url = djangoBaseURL +
+        '/attendance/api/report?orgId=${org.pk}&month=$month';
     final response = await http.get(url);
     final nonErrorResponse = _returnResponse(response) as Map<String, dynamic>;
     for (var i in nonErrorResponse.keys) {
@@ -85,8 +86,8 @@ class Attendance with ChangeNotifier {
   }
 
   Future<void> getAttendanceByEmpId() async {
-    final url =
-        'https://api-detect-admin.herokuapp.com/attendance/api/attendance/filter?empId=${emp.empId}';
+    final url = djangoBaseURL +
+        '/attendance/api/attendance/filter?empId=${emp.empId}';
     final response = await http.get(url);
     final extractedData = json.decode(response.body) as List<dynamic>;
     extractedData.forEach((att) {
@@ -100,7 +101,8 @@ class Attendance with ChangeNotifier {
   }
 
   Future<void> takeAttendance(String imagePath) async {
-    final url = 'https://api-detect-admin.herokuapp.com/attendance/detect/';
+    final url = djangoBaseURL +
+        '/attendance/detect/';
     var request = http.MultipartRequest('POST', Uri.parse(url));
     try {
       request.files.add(await http.MultipartFile.fromPath('image', imagePath));
@@ -133,8 +135,8 @@ class Attendance with ChangeNotifier {
   }
 
   Future<void> trainDataset(List<Asset> images) async {
-    final url =
-        'https://api-detect-admin.herokuapp.com/attendance/train_dataset/';
+    final url = djangoBaseURL +
+        '/attendance/train_dataset/';
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['empId'] = emp.empId.toString();
     try {
